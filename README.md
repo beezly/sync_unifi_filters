@@ -132,6 +132,54 @@ cat list1.txt list2.txt | sort -u > combined.txt
 ./sync_unifi_filters.py sync "Combined Filter" combined.txt
 ```
 
+## Example: Blocking Samsung TV Ads
+
+This repository includes a curated list of Samsung TV advertising and telemetry domains in [`example_samsung_adblock_filters.txt`](example_samsung_adblock_filters.txt). Use this to block ads and tracking on Samsung Smart TVs connected to your network.
+
+### Quick Start
+
+1. **Create a content filter** in your Unifi Controller UI (Settings → Security → Content Filtering):
+   - Name: `Samsung Adblock`
+   - Categories: Basic
+   - Sources: Select your IoT network or specific Samsung TV devices
+
+2. **Sync the filter list** to your Unifi Controller:
+```bash
+# Set your credentials
+export UNIFI_HOST="https://192.168.1.1"
+export UNIFI_USERNAME="admin"
+export UNIFI_PASSWORD="your_password"
+
+# Sync the Samsung blocklist
+./sync_unifi_filters.py sync "Samsung Adblock" example_samsung_adblock_filters.txt
+```
+
+3. **Verify the sync** by fetching the filter:
+```bash
+./sync_unifi_filters.py fetch "Samsung Adblock"
+```
+
+### What Gets Blocked
+
+The Samsung filter list (71 domains) blocks:
+- **Advertising**: Samsung ad hubs, ad servers, and tracking domains
+- **Telemetry**: Usage analytics, error reporting, and metrics collection
+- **Content promotion**: App recommendations, game promotions, and premium content ads
+
+See [`example_samsung_adblock_filters.txt`](example_samsung_adblock_filters.txt) for the complete list of blocked domains.
+
+### Updating the Filter
+
+You can edit `example_samsung_adblock_filters.txt` to add or remove domains, then sync again:
+
+```bash
+# Edit the file
+nano example_samsung_adblock_filters.txt
+
+# Sync your changes
+./sync_unifi_filters.py sync "Samsung Adblock" example_samsung_adblock_filters.txt
+```
+
 ## Filter File Format
 
 Filter files are simple text files with one domain per line:
