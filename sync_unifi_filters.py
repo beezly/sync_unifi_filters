@@ -6,6 +6,8 @@ import requests
 import sys
 import os
 import argparse
+import json
+import base64
 from typing import List
 
 # Configuration - Can be set via environment variables or updated here
@@ -23,6 +25,33 @@ class UnifiContentFilter:
         self.site = site
         self.session = requests.Session()
         self.session.verify = False  # Disable SSL verification for self-signed certs
+        self.csrf_token = None
+
+    def _extract_csrf_token(self):
+        """Extract CSRF token from JWT cookie"""
+        token_cookie = self.session.cookies.get('TOKEN')
+        if not token_cookie:
+            return None
+
+        try:
+            # JWT format: header.payload.signature
+            parts = token_cookie.split('.')
+            if len(parts) != 3:
+                return None
+
+            # Decode the payload (add padding if needed for base64)
+            payload = parts[1]
+            padding = 4 - len(payload) % 4
+            if padding != 4:
+                payload += '=' * padding
+
+            decoded = base64.urlsafe_b64decode(payload)
+            payload_data = json.loads(decoded)
+
+            return payload_data.get('csrfToken')
+        except Exception as e:
+            print(f"Warning: Could not extract CSRF token: {e}", file=sys.stderr)
+            return None
 
     def login(self):
         """Login to Unifi Controller"""
@@ -33,7 +62,13 @@ class UnifiContentFilter:
         }
         response = self.session.post(url, json=data)
         response.raise_for_status()
-        print("✓ Logged in to Unifi Controller", file=sys.stderr)
+
+        # Extract CSRF token from JWT cookie
+        self.csrf_token = self._extract_csrf_token()
+        if self.csrf_token:
+            print("✓ Logged in to Unifi Controller (CSRF token acquired)", file=sys.stderr)
+        else:
+            print("✓ Logged in to Unifi Controller (Warning: No CSRF token)", file=sys.stderr)
 
     def get_content_filters(self):
         """Get all content filtering rules"""
@@ -64,7 +99,12 @@ class UnifiContentFilter:
         # Update the block_list with new domains
         content_filter['block_list'] = domains
 
-        response = self.session.put(url, json=content_filter)
+        # Add CSRF token header if available
+        headers = {}
+        if self.csrf_token:
+            headers['X-CSRF-Token'] = self.csrf_token
+
+        response = self.session.put(url, json=content_filter, headers=headers)
         response.raise_for_status()
         print(f"✓ Updated {len(domains)} domains on Unifi Controller", file=sys.stderr)
         return True
