@@ -136,4 +136,5 @@ Thumbs.db
 # Project specific
 *.txt
 !requirements.txt
+!example_samsung_adblock_filters.txt
 *.har
