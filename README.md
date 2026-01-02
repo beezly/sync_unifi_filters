@@ -258,7 +258,40 @@ The script disables SSL verification for self-signed certificates by default. If
 
 ## Contributing
 
-Contributions are welcome! Please feel free to submit issues or pull requests.
+Contributions are welcome! Here's how you can help:
+
+### Reporting Issues
+
+Found a bug or have a feature request?
+
+- **Bug Reports**: [Open an issue](https://github.com/beezly/sync_unifi_filters/issues/new) with details about the problem
+  - Include your Unifi Controller version
+  - Provide error messages and command output
+  - Describe steps to reproduce the issue
+
+- **Feature Requests**: [Open an issue](https://github.com/beezly/sync_unifi_filters/issues/new) to suggest new features
+  - Describe the feature and its use case
+  - Explain how it would benefit users
+  - Consider including example usage
+
+### General Discussion
+
+Have questions or want to share how you're using this tool?
+
+- **Discussions**: Use [GitHub Discussions](https://github.com/beezly/sync_unifi_filters/discussions) for:
+  - General questions and help
+  - Sharing filter lists and use cases
+  - Tips and tricks
+  - Community support
+
+### Pull Requests
+
+Code contributions are appreciated! Please:
+- Fork the repository
+- Create a feature branch
+- Follow the existing code style
+- Test your changes
+- Submit a pull request with a clear description
 
 ## License
 
